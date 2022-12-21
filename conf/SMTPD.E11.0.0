@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="tis-620" ?>
+<configuration>
+   <cold>
+      <HomeDirectory value="/opt/equinox" />
+      <sf group="SMTPD" service="0" instance="0">
+         <!-- <Host host="127.0.0.1" port="20200" alias="E00_1" />  alias is optional-->
+		 <Host host="127.0.0.1" port="20500" />
+         <!--remote-site=[E00 remote site name]-->
+		 <!-- Domain socket linux -->
+		 <!-- <LocalHost instance="E00 Instance" alias="E00_1" /> alias is optional--> 
+      </sf>
+	  <e11db om-port="20005" size="8589934592" restore="exist" link-backup-file="latest_backup_E11" />
+      <!-- restore=[all|exist(default)|notify] -->
+      <!-- restore-delay=[seconds(0)] for delay backup restoration -->
+      <!-- backup-version=[4(default)] 0:3.0.0-3.0.13, 1:3.0.14-3.0.21, 2:3.0.22-3.1.2, 3:3.1.3-3.1.8 4:3.2.0+ -->
+      <!-- outgoing-agent=[MASTER|ORIGIN(default)|ANY] -->
+      <!-- routing-mode=[PREFER_ORIGIN(default)|PREFER_SITE|SAME_ORIGIN|SAME_SITE] -->
+      <!-- local-site=[E11 local site name] -->
+      <!--<replication status-port="3868" data-port="3878" pair="127.0.0.1" site="local" pause-able="yes" connection="1" />-->
+      <!--pair=[destination host] -->
+      <!--site=[local] for start E11 on the same host-->
+   </cold>
+   <warm>
+      <SFLOG value="FATAL|ERROR|WARN|INFO|DEBUG" />
+      <SFLOGColorEnable value="no" />
+	  <!-- SFLOGSplitInterval number of minute value : 5-1440 (1440 = 1 day) **value can modulo to 1440 only.(ex: 10,20,30,60,120) -->
+	  <SFLOGSplitInterval value="1440" />
+	  <!-- StatInterval value : 1,2,3,4,5,6,10,12,15,20,30,60 -->
+      <StatInterval value="10" />
+      <!-- StatAlignment for adjust number of second in minute value : 0-59 -->
+      <StatAlignment value="0" />
+      <!-- StatResetInterval number of minute value : 1-1440 (1440 = 1 day) ** value can modulo to 1440(1 day) only.(ex: 5,10,60(1 hour),360(6 hours))  -->
+      <StatResetInterval value="1440" />
+      <RestartDelay value="2" />
+      <MaxRetry value="1" />
+
+      <SFMessageTimeout value="60" />
+      <SFMaxClient value="2" />
+      <SFConnectTimeout value="10" />
+      <SFReadTimeout value="30" />
+      <SFWriteTimeout value="30" />
+      <SFACKTimeout value="60" />
+      <SFWatchdogInterval value="30" />
+      <SFMaxWriteLength value="0" />
+      <SFHighMessageCount value="10000" />
+      <SFLowMessageCount value="1000" />
+	  <!-- <AFService value="1"/> trigger mode, active start to ES00.service -->
+
+   </warm>
+</configuration>

@@ -1,0 +1,3 @@
+curl -XGET -H 'Content-Type: text/xml' -d '<demo>
+<SMTP name="Demo" value="1234" />
+</demo>' 'http://localhost:21300'
