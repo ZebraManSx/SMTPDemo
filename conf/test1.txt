@@ -1,10 +1,3 @@
-curl -XGET -H 'Content-Type: text/xml' -d '<demo><SMTP>/opt/equinoxAS/lib/smpt_message/test1.txt</SMTP></demo>' 'http://localhost:21300'
-
-
-
-
-==================== in file : /opt/equinoxAS/lib/smpt_message/test1.txt ===================== 
-
 <EQXMail>
 	<Subject value="Hello SMTP Demo" />
 	<Content-Type value="text/plain" />		

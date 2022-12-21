@@ -1,11 +1,11 @@
 package smtp.states;
      
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader; 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Vector;
+import java.util.Map.Entry; 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +27,7 @@ public class ApplicationStateIDLE implements IAFState {
 	 
 	@Override
 	public ECDialogue doAction(AbstractAF abstractAF, InstanceData instanceData, List<EquinoxRawData> eqxRawDataList) {
-		AFLog.d("Hello, I am : " +  abstractAF.getEquinoxProperties().getApplicationName());
+		AFLog.d("[SMTP Demo test with read file] Hello, I am : " +  abstractAF.getEquinoxProperties().getApplicationName());
 		//String incomingMsg = null;
 		//String[] to = null;//new String[4]; //[index 0:ApplicationName, 1: RA , 2:ServiceName ,3: Instance Name] 
  		/*String name = "" ; //protocol
@@ -50,7 +50,7 @@ public class ApplicationStateIDLE implements IAFState {
 
 		EApplicationState nextState = EApplicationState.IDLE;
 		int timeout = 10;
-		String smtpPattern1 = "(?is)(<SMTP name=\"Demo\"\\s{0,}value=\")(.*?)(\"\\s{0,}/>)"; 
+		String smtpPattern1 = "(?is)(<SMTP>)(.*?)(</SMTP>)"; 
 		 
 		
 		
@@ -68,69 +68,25 @@ public class ApplicationStateIDLE implements IAFState {
 	        		optionalAttribute = new HashMap<String,String>();
 	        		 
 	        		//send message 
-	        		StringBuilder message = new StringBuilder("");
+	        		StringBuilder raES28message = new StringBuilder("");
 	        		
-	        		/**
-	        		 <subjectValue value="Hello SMTP Demo" />
-        			
-        			<toName1 value="" />
-        			<toEmail1 value="" />
-					<toName2 value="" />
-        			<toEmail2value="" />
-        			<toName3 value="" />
-        			<toEmail3value="" />
-        			
-        			<ccName1 value="" />
-        			<ccEmail1 value="" />
-					<ccName2 value="" />
-        			<ccEmail2 value="" />
-        			<ccName3 value="" />
-        			<ccEmail3 value="" />
-        			
-        			<bccName1 value="" />
-        			<bccEmail1 value="" />
-					<bccName2 value="" />
-        			<bccEmail2 value="" />
-        			<bccName3 value="" />
-        			<bccEmail3 value="" />
-        			
-        			<attachName1 value="" />
-        			<attachPath1 value="" />
-					<attachName2 value="" />
-        			<attachPath2 value="" />
-        			<attachName3 value="" />
-        			<attachPath3 value="" />
-        			
-        			<bodyValue value="Hi SMTP this is your msg : 1234 Test !@#$..." />
-        			
-	        		 */
-	        		message.append("<EQXMail>")
-	                .append("<Subject value=\"").append(warmConfigurations.get("subjectValue").get(0)).append("\" />")
-	                .append("<Content-Type value=\"").append(warmConfigurations.get("contentTypeofBody").get(0)).append("\" />")
-	                .append("<To name=\"").append(warmConfigurations.get("toName1").get(0)).append("\" email=\"").append(warmConfigurations.get("toEmail1").get(0)).append("\" />")
-	                .append("<To name=\"").append(warmConfigurations.get("toName2").get(0)).append("\" email=\"").append(warmConfigurations.get("toEmail2").get(0)).append("\" />")
-	                .append("<To name=\"").append(warmConfigurations.get("toName3").get(0)).append("\" email=\"").append(warmConfigurations.get("toEmail3").get(0)).append("\" />")
-
-	                .append("<CC name=\"").append(warmConfigurations.get("ccName1").get(0)).append("\" email=\"").append(warmConfigurations.get("ccEmail1").get(0)).append("\" />")
-	                .append("<CC name=\"").append(warmConfigurations.get("ccName2").get(0)).append("\" email=\"").append(warmConfigurations.get("ccEmail2").get(0)).append("\" />")
-	                .append("<CC name=\"").append(warmConfigurations.get("ccName3").get(0)).append("\" email=\"").append(warmConfigurations.get("ccEmail3").get(0)).append("\" />")
-
-	                .append("<BCC name=\"").append(warmConfigurations.get("bccName1").get(0)).append("\" email=\"").append(warmConfigurations.get("bccEmail1").get(0)).append("\" />")
-	                .append("<BCC name=\"").append(warmConfigurations.get("bccName2").get(0)).append("\" email=\"").append(warmConfigurations.get("bccEmail2").get(0)).append("\" />")
-	                .append("<BCC name=\"").append(warmConfigurations.get("bccName3").get(0)).append("\" email=\"").append(warmConfigurations.get("bccEmail3").get(0)).append("\" />")
- 
-	                .append("<Attach name=\"").append(warmConfigurations.get("attachName1").get(0)).append("\" path=\"").append(warmConfigurations.get("attachPath1").get(0)).append("\" />")
-	                .append("<Attach name=\"").append(warmConfigurations.get("attachName2").get(0)).append("\" path=\"").append(warmConfigurations.get("attachPath2").get(0)).append("\" />")
-	                .append("<Attach name=\"").append(warmConfigurations.get("attachName3").get(0)).append("\" path=\"").append(warmConfigurations.get("attachPath3").get(0)).append("\" />")
-	            
-	                .append("<Body value=\"").append(warmConfigurations.get("bodyValue").get(0)).append("\" />")
-	                .append("</EQXMail>");
+	        		String fileName = m1.group(2);
+					AFLog.d("smtp read file is : " +fileName); 
+					try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+						String line;
+						while ((line = br.readLine()) != null) {
+							raES28message.append(line);
+						}
+					}catch(Exception ex) {
+						AFLog.e(ex);
+					}
+					AFLog.d("build smtp message  for rawdata to ES28 is : " + raES28message); 
 	            
 	        		String invoke = "1";
 	        		String serviceName = "0";
 	        		String instance = "0";
 	        		
-	        		abstractAF.getEquinoxUtils().sendSMTPRequestMessage(new RawMessage(message.toString())
+	        		abstractAF.getEquinoxUtils().sendSMTPRequestMessage(new RawMessage(raES28message.toString())
 	   					, ec02.data.enums.EEquinoxRawData.CTypeSMTP.TEXT_XML
 	   					, invoke 
 	   					, serviceName,instance
@@ -186,7 +142,7 @@ public class ApplicationStateIDLE implements IAFState {
 		return null;
 	}
   
-	public static void main2(String[] args) {
+	/*public static void main2(String[] args) {
 		String[] aa = new String[] { "name1", "valu1" };
 		String[] bb = new String[] { "name2", "valu2" };
 		String[] cc = new String[] { "name3", "valu4" };
@@ -212,22 +168,30 @@ public class ApplicationStateIDLE implements IAFState {
 		}
 
 		System.exit(0);
-	}
+	}*/
 	
 	public static void main(String[] args) {
-		String sipUEPattern1 = "(?is)(<Header name=\"From\" value=\"&lt;sip:)(.*?)(@)(ims\\.mnc)(\\d+)(\\.mcc)(\\d+)(\\.)(.*?)(&gt;)";
-		String aa = " <Header name=\"From\" value=\"&lt;sip:520030107073610@ims.mnc003.mcc520.3gppnetwork.org&gt;;tag=d2bd0679\" />\n" + 
-				"                        <Header name=\"To\" value=\"&lt;sip:520030107073610@ims.mnc003.mcc520.3gppnetwork.org&gt;\" />\n";
-				;
-		Pattern p1 = Pattern.compile(sipUEPattern1);
+		String aa = " <demo><SMTP>D:\\AIS Work\\EC02 Workspace\\SMTPDemo\\conf\\test1.txt</SMTP></demo>";
+				
+		String smtpPattern =  "(?is)(<SMTP>)(.*?)(</SMTP>)"; 
+		Pattern p1 = Pattern.compile(smtpPattern);
 		Matcher m1 = p1.matcher(aa);
+		StringBuilder raES28message = new StringBuilder("");
 		
-		if(m1.find()) {
-			System.out.println(m1.group(2));
-			System.out.println(m1.group(5));
-			System.out.println(m1.group(7));
-			System.out.println(m1.group(9));
-		}
+			if(m1.find()) {
+				String fileName = m1.group(2);
+				System.out.println("fileName is : " +fileName); 
+				try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+					String line;
+					while ((line = br.readLine()) != null) {
+						raES28message.append(line);
+					}
+				}catch(Exception ex) {
+					System.out.println(ex);
+				}
+				System.out.println("build smtp message  for rawdata to ES28 is : " + raES28message); 
+			}
+		
 		
 		System.exit(0);
 	}
