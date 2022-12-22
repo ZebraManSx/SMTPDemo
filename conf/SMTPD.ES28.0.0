@@ -12,7 +12,7 @@
         <!--MailServer host="localhost" port="25" name="AIS Info" user="toro@localhost" password="" email="" auth="NONE" security="STARTTLS" ca_file="" / -->
         <!-- Gmail server -->
         <!--MailServer host="smtp.gmail.com" port="587" name="AIS Info" user="romacct1234@gmail.com" password="cbabkczguppghcar" auth="LOGIN" security="STARTTLS" ca_file="" / -->
-        <MailServer host="smtp.gmail.com" port="587" name="Test ES28" user="ourtestmailxxx" password="opjzvpsflbwoavvg" email="ourtestmailxxx@gmail.com" auth="PLAIN" security="STARTTLS" ca_file="" />
+        <MailServer host="smtp.gmail.com" port="587" name="Test ES28" user="" password="" email="ourtestmailxxx@gmail.com" auth="PLAIN" security="STARTTLS" ca_file="" />
     </cold>
     <warm>
         <SFLOG value="FATAL|ERROR|WARN|INFO|DEBUG" />
